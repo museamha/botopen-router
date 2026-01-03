@@ -1,0 +1,152 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASTUSS Chatbot</title>
+  <link rel="stylesheet" href="{% static 'style.css' %}" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar collapsed">
+    <div class="sidebar-header">
+      <img src="{% static 'icon1.png' %}" alt="Logo" class="header-logo" />
+      <button class="sidebar-toggle">
+        <span class="material-symbols-rounded">menu</span>
+      </button>
+    </div>
+
+    <div class="sidebar-content">
+      <button class="newchat">
+        <img src="{% static 'newchat_icon.png' %}" alt="new chat" />
+        <span>New Chat</span>
+      </button>
+      <ul class="menu-list">
+        <li class="menu-item">
+          <a href="#" class="menu-link active">
+            <span class="material-symbols-rounded">history</span>
+            <span class="menu-label">History 1</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="theme-toggle">
+        <div class="theme-label">
+          <span class="theme-icon material-symbols-rounded">dark_mode</span>
+          <span class="theme-text">Account</span>
+        </div>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="container">
+    <div class="main-content">
+      <h1 class="page-title">ASTUSS Chatbot</h1>
+
+      <div class="card">
+        <h2>Welcome To ASTU SS Chatbot</h2>
+        <h4>Student-based AI Chatbot</h4>
+      </div>
+
+      <!-- Chat messages -->
+      <div class="chat-box" id="chatBox"></div>
+
+      <!-- Chat input -->
+      <div class="chat-input-container">
+        <textarea id="messageInput" placeholder="Type your message..." rows="1"></textarea>
+        <button class="icon-btn send" id="sendBtn">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static 'script.js' %}"></script>
+  <script>
+    // Chat functionality
+    const chatBox = document.getElementById("chatBox");
+    const input = document.getElementById("messageInput");
+    const sendBtn = document.getElementById("sendBtn");
+
+    function appendMessage(sender, text) {
+      const div = document.createElement("div");
+      div.className = "message " + sender;
+      div.textContent = text;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const message = input.value.trim();
+      if (!message) return;
+
+      appendMessage("user", message);
+      input.value = "";
+
+      try {
+        const response = await fetch("{% url 'chatbot' %}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: JSON.stringify({ message })
+        });
+
+        const data = await response.json();
+        if (data.reply) {
+          appendMessage("bot", data.reply);
+        } else {
+          appendMessage("bot", "Error: No reply from server.");
+        }
+      } catch (err) {
+        appendMessage("bot", "Error: Could not connect to server.");
+      }
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+    input.addEventListener("keypress", function(e) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // Sidebar & theme JS (your existing JS)
+    const sidebarToggleBtns = document.querySelectorAll(".sidebar-toggle");
+    const sidebar = document.querySelector(".sidebar");
+    const searchForm = document.querySelector(".newchat");
+    const themeToggleBtn = document.querySelector(".theme-toggle");
+    const themeIcon = themeToggleBtn.querySelector(".theme-icon");
+
+    const updateThemeIcon = () => {
+      const isDark = document.body.classList.contains("dark-theme");
+      themeIcon.textContent = sidebar.classList.contains("collapsed") ? (isDark ? "light_mode" : "dark_mode") : "dark_mode";
+    };
+
+    const savedTheme = localStorage.getItem("theme");
+    const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const shouldUseDarkTheme = savedTheme === "dark" || (!savedTheme && systemPrefersDark);
+    document.body.classList.toggle("dark-theme", shouldUseDarkTheme);
+
+    sidebarToggleBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        sidebar.classList.toggle("collapsed");
+        updateThemeIcon();
+      });
+    });
+
+    searchForm.addEventListener("click", () => {
+      if (sidebar.classList.contains("collapsed")) sidebar.classList.remove("collapsed");
+      searchForm.querySelector("img").focus();
+    });
+
+    if (window.innerWidth > 768) sidebar.classList.remove("collapsed");
+  </script>
+</body>
+</html>
