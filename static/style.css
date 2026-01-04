@@ -1,0 +1,277 @@
+/* Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+/* Reset & base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body.dark-theme {
+  background: linear-gradient(135deg, #e0e7ff 0%, #f0f4ff 100%);
+  color: #1e3a8a;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* --- Layout --- */
+.container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 270px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #97b4ed, #071245);
+  border-right: 1px solid #3b475c;
+  transition: width 1s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.sidebar.collapsed {
+  width: 90px;
+}
+
+.sidebar-header {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(180deg, #437af1, #2b3f97);
+}
+
+.header-logo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.sidebar-toggle {
+  background: var(--color-bg-secondary, #3d4859);
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.newchat {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 15px;
+  background: #ffffff;
+  color: #000;
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.menu-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.menu-link {
+  text-decoration: none;
+  color: #fff;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.menu-link.active,
+.menu-link:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+  padding: 20px;
+}
+
+/* Chat wrapper */
+.chat-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: 12px;
+  margin: 10px;
+  box-shadow: 0 0 30px rgba(0,0,0,0.1);
+  position: relative;
+}
+
+/* Chat Header */
+.chat-header {
+  flex-shrink: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%);
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+/* Chat container */
+.chat-container {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scroll-behavior: smooth;
+}
+
+/* Bubbles */
+.message-row {
+  display: flex;
+}
+
+.user-row { justify-content: flex-end; }
+.gemini-row { justify-content: flex-start; }
+
+.bubble {
+  max-width: 70%;
+  padding: 12px 18px;
+  border-radius: 18px;
+  line-height: 1.4;
+  word-wrap: break-word;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.user-bubble {
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  color: #fff;
+}
+
+.gemini-bubble {
+  background: #e0f2fe;
+  color: #1e3a8a;
+  border: 1px solid #bae6fd;
+}
+
+/* Input */
+.chat-input-container {
+  flex-shrink: 0;
+  display: flex;
+  gap: 10px;
+  padding: 10px 14px;
+  border-top: 1px solid #bae6fd;
+  background: #e0f2fe;
+}
+
+.chat-input-container input {
+  flex: 1;
+  padding: 14px;
+  border-radius: 12px;
+  border: 2px solid #93c5fd;
+  outline: none;
+}
+
+/* Send button */
+.send-btn {
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 0 18px;
+  cursor: pointer;
+}
+
+/* Scrollbar */
+.chat-container::-webkit-scrollbar {
+  width: 8px;
+}
+.chat-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+.chat-container::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar { position: fixed; left: -270px; top:0; height:100%; z-index:5; }
+  .sidebar.collapsed { left:0; }
+  .chat-wrapper { margin: 0; width: 100%; border-radius:0; }
+}
+.clear-btn {
+    background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+    border: none;
+    color: #ffffff;
+    font-size: 18px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.clear-btn:hover {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+}
+
+.clear-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 6px rgba(220, 38, 38, 0.3);
+}
+/* Base button style */
+.sidebar-toggle {
+    height: 40px;
+    width: 40px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: #3d4859; /* You can adjust to your theme */
+    color: #f1f5f9;
+    transition: transform 1s ease;
+}
+
+/* Rotate sidebar toggle icon when sidebar collapsed */
+.sidebar-toggle span {
+    display: inline-block;
+    transition: transform 0.4s ease;
+}
+
+.sidebar-toggle.rotated span {
+    transform: rotate(-180deg);
+}
+
+/* Smooth hide/show for sidebar content & footer */
+.sidebar-content,
+.sidebar-footer {
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.sidebar.collapsed .sidebar-content,
+.sidebar.collapsed .sidebar-footer {
+    opacity: 0;
+    visibility: hidden;
+}

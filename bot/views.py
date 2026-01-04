@@ -1,57 +1,64 @@
-# chat/views.py
-import json
-import requests
+from django.shortcuts import render, redirect
+from .forms import PromptForm
+from .models import Conversation
 from django.conf import settings
-from django.http import JsonResponse
-from django.views import View
-from django.views.generic import TemplateView
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
+import google.generativeai as genai
+import markdown
+
+genai.configure(api_key=settings.GEMINI_API_KEY)
 
 
-class ChatPageView(TemplateView):
-    template_name = "chat/chat.html"  
+def chat_view(request):
+    conversations = Conversation.objects.all().order_by("created_at")
 
-@method_decorator(csrf_exempt, name='dispatch')
-class ChatbotAPIView(View):
+    if request.method == "POST":
 
+        # 🔹 Clear chat
+        if "clear" in request.POST:
+            Conversation.objects.all().delete()
+            return redirect("chat")
 
-    def post(self, request, *args, **kwargs):
-        try:
-            data = json.loads(request.body)
-            user_message = data.get("message", "")
+        form = PromptForm(request.POST)
+        if form.is_valid():
+            prompt = form.cleaned_data["prompt"]
 
-            headers = {
-                "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
-                "Content-Type": "application/json",
-                "HTTP-Referer": "http://localhost:8000",  
-                "X-Title": "School Chatbot",
-            }
+            # 🔹 Build chat history
+            history = []
+            for convo in conversations:
+                history.append({
+                    "role": "user",
+                    "parts": [convo.user_message]
+                })
+                history.append({
+                    "role": "model",
+                    "parts": [convo.bot_response]
+                })
 
-            payload = {
-                "model": "deepseek/deepseek-chat",  
-                "messages": [
-                    {
-                        "role": "system",
-                        "content": "You are a helpful school assistant. Answer clearly and simply."
-                    },
-                    {
-                        "role": "user",
-                        "content": user_message
-                    }
-                ]
-            }
+            # 🔹 Start Gemini chat
+            model = genai.GenerativeModel("models/gemini-2.5-flash")
+            chat = model.start_chat(history=history)
 
-            response = requests.post(
-                "https://openrouter.ai/api/v1/chat/completions",
-                headers=headers,
-                json=payload
+            response = chat.send_message(prompt)
+
+            # ✅ Default value
+            bot_response = "<i>No response from Gemini.</i>"
+
+            if response and response.candidates:
+                raw_text = response.candidates[0].content.parts[0].text
+                bot_response = markdown.markdown(raw_text)  # Convert markdown to HTML
+
+            # 🔹 Save conversation once
+            Conversation.objects.create(
+                user_message=prompt,
+                bot_response=bot_response
             )
 
-            result = response.json()
-            reply = result["choices"][0]["message"]["content"]
+            return redirect("chat")
 
-        except Exception as e:
-            reply = f"Server error: {str(e)}"
+    else:
+        form = PromptForm()
 
-        return JsonResponse({"reply": reply})
+    return render(request, "bot/index.html", {
+        "form": form,
+        "conversations": conversations
+    })

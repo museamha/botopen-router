@@ -146,18 +146,7 @@ body {
   background-color: #fbf8f8;
   box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
 }
-/* 
-.sidebar-content .search-form {
-  border-radius: 8px;
-  min-height: 48px;
-  margin: 5px 0 20px;
-  align-items: center;
-  display: flex;
-  padding: 0 15px;
-  white-space: nowrap;
-  background: var(--color-bg-secondary);
-  transition: 0.4s ease;
-} */
+
 
 .sidebar.collapsed .newchat:hover {
   cursor: pointer;
@@ -171,20 +160,6 @@ body {
 .sidebar-content .newchat span {
   color: var(--color-text-placeholder);
 }
-/*
-.search-form input {
-  background: none;
-  outline: none;
-  border: none;
-  width: 100%;
-  margin-left: 15px;
-  font-size: 1rem;
-  color: var(--color-text-primary);
-}
-
-.search-form input::placeholder {
-  color: var(--color-text-placeholder);
-} */
 
 .sidebar-content .menu-list {
   display: flex;
