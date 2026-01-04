@@ -61,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -136,10 +137,17 @@ SESSION_CACHE_ALIAS = "default"
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
+# settings.py
+
 STATIC_URL = '/static/'
+
+# Where Django will look for your static files in development
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),  # global static
+    os.path.join(BASE_DIR, 'static'),
 ]
+
+# Where Django will collect all static files for production
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # you can name this folder anything
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
