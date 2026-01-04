@@ -28,7 +28,11 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 # Allowed hosts
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='').split(',')
+ALLOWED_HOSTS = [
+    "astussbot-gdqv.onrender.com",
+    "127.0.0.1",
+    "localhost",
+]
 
 # Gemini API Key
 GEMINI_API_KEY = config('GEMINI_API_KEY')
